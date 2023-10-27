@@ -1,0 +1,17 @@
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.infrastructure.data.deps.json
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.infrastructure.data.runtimeconfig.json
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.infrastructure.data.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.infrastructure.data.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.domain.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\bin\Release\net7.0\hexagonal.domain.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.csproj.AssemblyReference.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.AssemblyInfoInputs.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.AssemblyInfo.cs
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.csproj.CoreCompileInputs.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.csproj.CopyComplete
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\refint\hexagonal.infrastructure.data.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\hexagonal.infrastructure.data.genruntimeconfig.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.data\obj\Release\net7.0\ref\hexagonal.infrastructure.data.dll

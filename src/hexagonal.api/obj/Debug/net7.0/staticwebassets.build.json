@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "asY4lVwgMGuJnImgVfBvR7mxzjSv6EAIPgsBPQNymnM=",
+  "Source": "hexagonal.infrastructure.api",
+  "BasePath": "_content/hexagonal.infrastructure.api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

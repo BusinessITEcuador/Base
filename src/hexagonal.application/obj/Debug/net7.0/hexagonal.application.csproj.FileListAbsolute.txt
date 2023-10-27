@@ -1,0 +1,17 @@
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.application.deps.json
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.application.dll
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.application.pdb
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.domain.dll
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.infrastructure.data.dll
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.infrastructure.data.pdb
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\bin\Debug\net7.0\hexagonal.domain.pdb
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.csproj.AssemblyReference.cache
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.AssemblyInfoInputs.cache
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.AssemblyInfo.cs
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.csproj.CoreCompileInputs.cache
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.csproj.CopyComplete
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.dll
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\refint\hexagonal.application.dll
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\hexagonal.application.pdb
+C:\Users\EmilyChimbo\Downloads\BIT.NetCore.Hexagonal (2)\BIT.NetCore.Hexagonal\src\hexagonal.application\obj\Debug\net7.0\ref\hexagonal.application.dll

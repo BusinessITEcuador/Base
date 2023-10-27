@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {deploymentName}
+spec:
+  replicas: {replicas}
+  selector:
+    matchLabels:
+      app: {appSelector}
+  template:
+    metadata:
+      labels:
+        app: {appSelector}
+    spec:
+      nodeName: {nodeName}
+      containers:
+        - name: {containerName}
+          image: {registryIP}:{registryPort}/{imageName}:{environment}
+          ports:
+          - containerPort: {targetPort}
+          
+          env:
+          - name: "ASPNETCORE_ENVIRONMENT"
+            value: {ASPNETCORE_ENVIRONMENT}
+          volumeMounts:
+            - name: {volMountName}
+              mountPath: {volMountPath}
+              subPath: {volMountSubpath}
+      restartPolicy: Always
+      hostAliases:
+      - ip: "10.10.8.226"
+        hostnames:
+        - "jappspru.cancilleria.gob.ec"
+      dnsPolicy: {dnsPolicy}
+      volumes:
+        - name: {volName}
+          configMap:
+            name: {configMapName}

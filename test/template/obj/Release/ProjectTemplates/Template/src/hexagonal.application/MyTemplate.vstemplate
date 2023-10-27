@@ -1,0 +1,40 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>hexagonal.application</Name>
+    <Description>Proyecto base hexagonal.application</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>hexagonal.application</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="hexagonal.application.csproj" File="hexagonal.application.csproj" ReplaceParameters="true">
+      <Folder Name="models" TargetFolderName="models">
+        <Folder Name="person" TargetFolderName="person">
+          <ProjectItem ReplaceParameters="true" TargetFileName="PersonRequestModel.cs">PersonRequestModel.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PersonResponseModel.cs">PersonResponseModel.cs</ProjectItem>
+        </Folder>
+      </Folder>
+      <Folder Name="profiles" TargetFolderName="profiles">
+        <ProjectItem ReplaceParameters="true" TargetFileName="PersonProfile.cs">PersonProfile.cs</ProjectItem>
+      </Folder>
+      <Folder Name="services" TargetFolderName="services">
+        <Folder Name="person" TargetFolderName="person">
+          <Folder Name="interfaces" TargetFolderName="interfaces">
+            <ProjectItem ReplaceParameters="true" TargetFileName="IPersonService.cs">IPersonService.cs</ProjectItem>
+          </Folder>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PersonService.cs">PersonService.cs</ProjectItem>
+        </Folder>
+        <ProjectItem ReplaceParameters="true" TargetFileName="IUnitOfWork.cs">IUnitOfWork.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="UnitOfWork.cs">UnitOfWork.cs</ProjectItem>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

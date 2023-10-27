@@ -1,0 +1,17 @@
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.application.deps.json
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.application.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.application.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.domain.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.infrastructure.data.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.infrastructure.data.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\bin\Release\net7.0\hexagonal.domain.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.csproj.AssemblyReference.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.AssemblyInfoInputs.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.AssemblyInfo.cs
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.csproj.CoreCompileInputs.cache
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.csproj.CopyComplete
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\refint\hexagonal.application.dll
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\hexagonal.application.pdb
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.application\obj\Release\net7.0\ref\hexagonal.application.dll

@@ -1,0 +1,38 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>hexagonal.data</Name>
+    <Description>Proyecto base hexagonal.data</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>hexagonal.data</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="hexagonal.data.csproj" File="hexagonal.data.csproj" ReplaceParameters="true">
+      <Folder Name="configs" TargetFolderName="configs">
+        <ProjectItem ReplaceParameters="true" TargetFileName="PersonConfig.cs">PersonConfig.cs</ProjectItem>
+      </Folder>
+      <Folder Name="contexts" TargetFolderName="contexts">
+        <ProjectItem ReplaceParameters="true" TargetFileName="DataDbContext.cs">DataDbContext.cs</ProjectItem>
+      </Folder>
+      <Folder Name="exceptions" TargetFolderName="exceptions">
+        <ProjectItem ReplaceParameters="true" TargetFileName="NotFoundException.cs">NotFoundException.cs</ProjectItem>
+      </Folder>
+      <Folder Name="repositories" TargetFolderName="repositories">
+        <Folder Name="generics" TargetFolderName="generics">
+          <ProjectItem ReplaceParameters="true" TargetFileName="Repository.cs">Repository.cs</ProjectItem>
+        </Folder>
+        <Folder Name="person" TargetFolderName="person">
+          <ProjectItem ReplaceParameters="true" TargetFileName="PersonRepository.cs">PersonRepository.cs</ProjectItem>
+        </Folder>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

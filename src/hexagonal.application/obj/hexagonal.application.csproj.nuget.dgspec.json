@@ -1,0 +1,219 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.application\\hexagonal.application.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.application\\hexagonal.application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.application\\hexagonal.application.csproj",
+        "projectName": "hexagonal.application",
+        "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.application\\hexagonal.application.csproj",
+        "packagesPath": "C:\\Users\\EmilyChimbo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\EmilyChimbo\\NuGet.Config",
+          "C:\\Users\\EmilyChimbo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\hexagonal.infrastructure.data.csproj": {
+                "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\hexagonal.infrastructure.data.csproj"
+              },
+              "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj": {
+                "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\hexagonal.infrastructure.data.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\hexagonal.infrastructure.data.csproj",
+        "projectName": "hexagonal.infrastructure.data",
+        "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\hexagonal.infrastructure.data.csproj",
+        "packagesPath": "C:\\Users\\EmilyChimbo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.data\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\EmilyChimbo\\NuGet.Config",
+          "C:\\Users\\EmilyChimbo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj": {
+                "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.10, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj",
+        "projectName": "hexagonal.domain",
+        "projectPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\hexagonal.domain.csproj",
+        "packagesPath": "C:\\Users\\EmilyChimbo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\EmilyChimbo\\Documents\\Proyecto VisasTotal\\Base\\src\\hexagonal.domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\EmilyChimbo\\NuGet.Config",
+          "C:\\Users\\EmilyChimbo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

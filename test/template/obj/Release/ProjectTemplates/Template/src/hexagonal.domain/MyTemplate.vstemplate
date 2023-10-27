@@ -1,0 +1,35 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>hexagonal.domain</Name>
+    <Description>Proyecto base hexagonal.domain</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>hexagonal.domain</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="hexagonal.domain.csproj" File="hexagonal.domain.csproj" ReplaceParameters="true">
+      <Folder Name="entities" TargetFolderName="entities">
+        <ProjectItem ReplaceParameters="true" TargetFileName="PersonEntity.cs">PersonEntity.cs</ProjectItem>
+      </Folder>
+      <Folder Name="models" TargetFolderName="models">
+        <ProjectItem ReplaceParameters="true" TargetFileName="PagedCollection.cs">PagedCollection.cs</ProjectItem>
+      </Folder>
+      <Folder Name="repositories" TargetFolderName="repositories">
+        <Folder Name="interfaces" TargetFolderName="interfaces">
+          <Folder Name="generics" TargetFolderName="generics">
+            <ProjectItem ReplaceParameters="true" TargetFileName="IRepository.cs">IRepository.cs</ProjectItem>
+          </Folder>
+          <ProjectItem ReplaceParameters="true" TargetFileName="IPersonDomainRepository.cs">IPersonDomainRepository.cs</ProjectItem>
+        </Folder>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
