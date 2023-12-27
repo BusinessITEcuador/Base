@@ -1,86 +1,26 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - develop
+- qa
 
-variables:
-- name: "targetPort"
-  value: "80"
-- group: GeneralDev
-- group: Base
-
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: DevOps
 stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool: LinuxDevUbuntu
-    steps:
-    - task: Docker@2
-      displayName: Docker Login
-      inputs:
-        containerRegistry: 'RegistryDevUbuntu'
-        command: 'login'
-    - task: Docker@2
-      displayName: Docker Build
-      inputs:
-        containerRegistry: 'RegistryDevUbuntu'
-        repository: '$(imageName)'
-        command: 'buildAndPush'
-        Dockerfile: 'src/hexagonal.api/Dockerfile'
-        buildContext: 
-        tags: '$(environment)'
-    - task: CmdLine@2
-      displayName: Deployment variables
-      inputs:
-        script: |
-          sed -i "s {deploymentName} $(deploymentName) " $(deploymentName).yaml
-          sed -i "s {replicas} $(replicas) " $(deploymentName).yaml
-          sed -i "s {appSelector} $(appSelector) " $(deploymentName).yaml
-          sed -i "s {containerName} $(containerName) " $(deploymentName).yaml
-          sed -i "s {registryIP} $(registryIP) " $(deploymentName).yaml
-          sed -i "s {registryPort} $(registryPort) " $(deploymentName).yaml
-          sed -i "s {imageName} $(imageName) " $(deploymentName).yaml
-          sed -i "s {environment} $(environment) " $(deploymentName).yaml
-          sed -i "s {targetPort} $(targetPort) " $(deploymentName).yaml
-          sed -i "s {ASPNETCORE_ENVIRONMENT} $(ASPNETCORE_ENVIRONMENT) " $(deploymentName).yaml
-          sed -i "s {dnsPolicy} $(dnsPolicy) " $(deploymentName).yaml
-          sed -i "s {volMountName} $(volMountName) " $(deploymentName).yaml
-          sed -i "s {volMountPath} $(volMountPath) " $(deploymentName).yaml
-          sed -i "s {volMountSubpath} $(volMountSubpath) " $(deploymentName).yaml
-          sed -i "s {volName} $(volName) " $(deploymentName).yaml
-          sed -i "s {configMapName} $(configMapName) " $(deploymentName).yaml
-          sed -i "s {nodeName} $(nodeName) " $(deploymentName).yaml
-          sed -i "s {memoryLimit} $(memoryLimit) " $(deploymentName).yaml
-          sed -i "s {memoryRequest} $(memoryRequest) " $(deploymentName).yaml
-          sed -i "s {cpuLimit} $(cpuLimit) " $(deploymentName).yaml
-          sed -i "s {cpuRequest} $(cpuRequest) " $(deploymentName).yaml
-          cat $(deploymentName).yaml
-          echo
-    - task: CmdLine@2
-      displayName: Service variables
-      inputs:
-        script: |
-          sed -i "s {serviceName} $(serviceName) " $(serviceName).yaml
-          sed -i "s {appSelector} $(appSelector) " $(serviceName).yaml
-          sed -i "s {exposedPort} $(exposedPort) " $(serviceName).yaml
-          sed -i "s {targetPort} $(targetPort) " $(serviceName).yaml
-          sed -i "s {loadBalancerExternalIP} $(loadBalancerExternalIP) " $(serviceName).yaml
-          cat $(serviceName).yaml
-          echo
-    - task: CopyFiles@2
-      displayName: Copy YAML
-      inputs:
-        Contents: |
-          $(deploymentName).yaml
-          $(serviceName).yaml
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    - task: PublishBuildArtifacts@1
-      displayName: Publish Manifest
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'manifests'
-        publishLocation: 'Container'
+  - template: compileback.yml@templates
+    parameters:
+      dfile: "src/hexagonal.api/Dockerfile"
+      micro: "Base"
+      appfolder: "src/hexagonal.api/"
+
+      ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+        ambiente: "develop"
+        pool: "LinuxDevUbuntu"
+        conregistry: "RegistryDevUbuntu"
+        targetfiles: "appsettings.Development.json"
+      ${{ if eq(variables['Build.SourceBranchName'], 'qa') }}:
+        ambiente: "qa"
+        pool: "Linux Qa"
+        conregistry: "RegistryQA"
+        targetfiles: "appsettings.QA.json"

@@ -9,9 +9,11 @@ namespace hexagonal.application.services
 
         IUsuarioDomainRepository GetUsuarioRepository();
 
+        ICuentaDomainRepository GetCuentaRepository();
+
         IGeneroDomainRepository GetGeneroRepository();
 
-        IIdiomaDomainRepository GetIdiomaRepository();
+        ILogDomainRepository GetLogRepository();
 
         void SaveSync();
 

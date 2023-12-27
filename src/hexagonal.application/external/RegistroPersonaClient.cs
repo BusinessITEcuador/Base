@@ -25,7 +25,7 @@ namespace hexagonal.application.external
                 return JsonConvert.DeserializeObject<ConfiguracionPersonaResponse>(responseStream);
             }
 
-            throw new Exception($"Error al obtener configuración de persona. StatusCode: {response.StatusCode}");
+            throw new Exception();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace hexagonal.application.models.usuario
+﻿namespace hexagonal.application.models.usuario
 {
     public class UsuarioRequestModel
     {
@@ -19,12 +17,16 @@ namespace hexagonal.application.models.usuario
         public DateTime FechaNacimiento { get; set; }
 
         public Guid? IdNacionalidad { get; set; }
+        public string? Nacionalidad { get; set; }
 
         public Guid? IdSexo { get; set; }
+        public string? Sexo { get; set; }
 
         public Guid? IdGenero { get; set; }
+        public string? Genero { get; set; }
 
         public Guid? IdTipoIdentificacion { get; set; }
+        public string? TipoIdentificacion { get; set; }
 
         public string? NumeroIdentificacion { get; set; }
 

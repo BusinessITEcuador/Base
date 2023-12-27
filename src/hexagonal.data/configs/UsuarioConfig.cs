@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace hexagonal.infrastructure.data.configs
 {
-    public class UsuarioConfig : IEntityTypeConfiguration<UsuarioEntity>
+    public class CuentaConfig : IEntityTypeConfiguration<CuentaEntity>
     {
-        public void Configure(EntityTypeBuilder<UsuarioEntity> builder)
+        public void Configure(EntityTypeBuilder<CuentaEntity> builder)
         {
-            builder.ToTable("Usuario");
+            builder.ToTable("Cuenta");
 
             builder.HasKey(x => x.Id);
-
-            builder.Property(u => u.Id)
-                .ValueGeneratedOnAdd();
 
             builder.Property(u => u.IsDeleted)
                 .HasDefaultValue(false);
@@ -25,8 +22,6 @@ namespace hexagonal.infrastructure.data.configs
             builder.Property(x => x.LastModifiedBy)
                 .HasColumnName("LastModifiedBy")
                 .HasDefaultValueSql("('00000000-0000-0000-0000-000000000000')");
-
-
         }
     }
 }

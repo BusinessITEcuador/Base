@@ -1,13 +1,11 @@
 using hexagonal.api.extensions.automappers;
 using hexagonal.api.extensions.injections;
 using hexagonal.api.extensions.servers;
-using System.Net;
-using Microsoft.Identity.Web;
 using hexagonal.infrastructure.api.models;
-using hexagonal.application.external;
+using Microsoft.Identity.Web;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAdB2C");
 
@@ -49,7 +47,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 

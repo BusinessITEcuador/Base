@@ -2,6 +2,7 @@
 {
     public class UsuarioResponseModel
     {
+        public Guid Id { get; set; }
         public string Nombres { get; set; }
         public string PrimerApellido { get; set; }
         public string? SegundoApellido { get; set; }
@@ -14,11 +15,9 @@
         public Guid IdTipoIdentificacion { get; set; }
         public string NumeroIdentificacion { get; set; }
 
-        public string IpPublica { get; set;}
-        public string Longitud { get; set;}
-        public string Latitud { get; set;}
-        public string Altitud { get; set;}
-
-
+        public string IpPublica { get; set; }
+        public string Longitud { get; set; }
+        public string Latitud { get; set; }
+        public string Altitud { get; set; }
     }
 }

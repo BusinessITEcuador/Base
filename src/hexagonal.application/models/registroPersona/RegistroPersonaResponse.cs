@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace hexagonal.application.models.registroPersona
+﻿namespace hexagonal.application.models.registroPersona
 {
     public class RegistroPersonaResponse
     {
     }
+
     public class ConfiguracionPersonaResponse
     {
         public bool ValidarRiesgoPais { get; set; }
@@ -30,5 +25,4 @@ namespace hexagonal.application.models.registroPersona
         public string CategoriasVisasVigentes { get; set; }
         public string PaisesHabilitadosCedula { get; set; }
     }
-
 }

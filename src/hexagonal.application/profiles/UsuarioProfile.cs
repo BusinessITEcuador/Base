@@ -10,6 +10,8 @@ namespace hexagonal.application.profiles
         {
             CreateMap<UsuarioEntity, UsuarioRequestModel>().ReverseMap();
             CreateMap<UsuarioEntity, UsuarioResponseModel>().ReverseMap();
+            CreateMap<CuentaEntity, UsuarioRequestModel>().ReverseMap();
+            CreateMap<CuentaEntity, CuentaResponseModel>().ReverseMap();
         }
     }
 }

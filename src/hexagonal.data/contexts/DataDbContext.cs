@@ -1,5 +1,6 @@
 ﻿using hexagonal.domain.entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection;
 
 namespace hexagonal.data.contexts
@@ -20,5 +21,7 @@ namespace hexagonal.data.contexts
         public DbSet<UsuarioEntity> Usuario { get; set; }
 
         public DbSet<GeneroEntity> Genero { get; set; }
+
+        public DbSet<LogEntity> Log { get; set; }
     }
 }

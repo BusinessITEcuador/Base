@@ -19,8 +19,6 @@ namespace hexagonal.application.services.registroPersona
             return await _registroPersonaClient.ObtenerConfiguracionDePersona();
         }
 
-
-
         public int CalcularEdad(DateTime fechaNacimiento)
         {
             DateTime fechaActual = DateTime.Today;
@@ -32,5 +30,4 @@ namespace hexagonal.application.services.registroPersona
             return edad;
         }
     }
-
 }

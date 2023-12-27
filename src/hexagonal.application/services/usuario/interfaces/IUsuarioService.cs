@@ -14,6 +14,10 @@ namespace hexagonal.application.services.usuario.interfaces
 
         UsuarioResponseModel GetById(Guid id);
 
-        UsuarioResponseModel GetByCorreo(string correoAlternativo);
+        UsuarioResponseModel GetByCorreo(string correo);
+
+        UsuarioResponseModel GetByCorreoAlternativo(string correoAlternativo);
+
+        UsuarioResponseModel ObtenerUsuarioPorCuentaId(Guid cuentaId);
     }
 }

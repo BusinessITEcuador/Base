@@ -1,16 +1,21 @@
 ﻿using Azure.Identity;
 using hexagonal.api.Controllers.bases;
+using hexagonal.application.external;
+using hexagonal.application.models.log;
+using hexagonal.application.models.tramites;
 using hexagonal.application.models.usuario;
+using hexagonal.application.services.log.interfaces;
 using hexagonal.application.services.registroPersona.interfaces;
 using hexagonal.application.services.usuario.interfaces;
-using hexagonal.application.services.usuario;
 using hexagonal.infrastructure.api.Controllers.bases;
 using hexagonal.infrastructure.api.models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection.XmlEncryption;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace hexagonal.infrastructure.api.Controllers
 {
@@ -22,57 +27,159 @@ namespace hexagonal.infrastructure.api.Controllers
 
         private readonly GraphApiOptions _graphApiOptions;
 
-
         private readonly IUsuarioService _UsuarioService;
 
+        private readonly ICuentaService _cuentaService;
+
         private readonly IRegistroPersonaService _registroPersonaService;
+
+        private readonly TramiteClient _tramiteClient;
+
+        private readonly CorreoClient _correoClient;
+
+        private readonly ILogService _logService;
         public UsuarioController(IOptions<GraphApiOptions> graphApiOptions,
             IUsuarioService UsuarioService,
             IRegistroPersonaService registroPersonaService,
+            ICuentaService cuentaService,
+            ILogService logService,
+            TramiteClient tramiteClient,
+            CorreoClient correoClient,
             ILogger<UsuarioController> logger) : base(logger)
         {
             this._logger = logger;
             this._graphApiOptions = graphApiOptions.Value;
             this._UsuarioService = UsuarioService;
             this._registroPersonaService = registroPersonaService;
+            this._cuentaService = cuentaService;
+            this._tramiteClient = tramiteClient;
+            this._logService = logService;
+            this._correoClient = correoClient;
         }
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpGet("{id}")]
-        [ValidateId]
-        public IActionResult GetById([FromRoute] string id)
+        //[Authorize(AuthenticationSchemes = "JwtBearerAuth,Bearer")]
+        [HttpPost]
+        [Route("ObtenerConLog")]
+        public IActionResult GetById([FromBody] UsuarioLogRequestModel usuario)
         {
-            var idioma = Request.Headers["Language"].FirstOrDefault();
-            if(idioma == null)
-            {
-                idioma = "es";
-            }
+            var lang = Request.Headers["Language"].FirstOrDefault();
+            if (lang == null)
+            lang = "es";
             try
             {
-                var Usuario = _UsuarioService.GetById(Guid.Parse(id));
+                var correo = string.Empty;
+                var scopes = new[] { _graphApiOptions.Scopes };
+                var tenantId = _graphApiOptions.TenantId;
+                var clientId = _graphApiOptions.ClientId;
+                var clientSecret = _graphApiOptions.ClientSecret;
+                var clientSecretCredential = new ClientSecretCredential(
+                    tenantId, clientId, clientSecret);
+                var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
+
+                var Cuenta = _cuentaService.GetById(usuario.Id);
+                if (Cuenta == null)
+                {
+                    //obtener correo de b2c
+                    try
+                    {
+                        var usuarioCuenta = graphClient.Users[usuario.Id.ToString()].GetAsync().Result.GivenName;
+                        if (usuarioCuenta != null)
+                        {
+                            correo = usuarioCuenta;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta",lang));
+                    }
+                }
+                else
+                {
+                    correo = Cuenta.Correo;
+                }
+                //guardar log
+                if (usuario.Log)
+                {
+                    try
+                    {
+                        var log = new LogRequestModel();
+                        log.Estado = "EXITOSO";
+                        log.Usuario = correo;
+                        log.Altitud = usuario.Altitud;
+                        log.Latitud = usuario.Latitud;
+                        log.Longitud = usuario.Longitud;
+                        log.IpPublica = usuario.IpPublica;
+                        _logService.Add(log);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(_tramiteClient.ObtenerMensaje("LogErrorInicio", lang));
+                    }
+                }
+                var Usuario = _UsuarioService.GetByCorreo(correo);
                 if (Usuario == null)
                 {
                     return this.Success(new { exist = false });
                 }
-                if (Usuario.SegundoApellido.IsNullOrEmpty())
+                else
                 {
-                    Usuario.SegundoApellido = string.Empty;
-                }
-                if (Usuario.SegundoApellido.Length > 0)
-                {
-                    Usuario.SegundoApellido = " " + Usuario.SegundoApellido;
-                }
-                var nombreCompleto = Usuario.Nombres + " " + Usuario.PrimerApellido + Usuario.SegundoApellido;
+                    if (Usuario.SegundoApellido.IsNullOrEmpty())
+                    {
+                        Usuario.SegundoApellido = string.Empty;
+                    }
+                    if (Usuario.SegundoApellido.Length > 0)
+                    {
+                        Usuario.SegundoApellido = " " + Usuario.SegundoApellido;
+                    }
+                    var nombreCompleto = Usuario.Nombres + " " + Usuario.PrimerApellido + Usuario.SegundoApellido;
 
-                return Success(new { exist = true , nombreCompleto = nombreCompleto });
+                    //validar nuevamente si la cuenta no existe para colocarla como validado
+                    var CuentaValidar = new CuentaResponseModel();
+                    try
+                    {
+                        CuentaValidar = _cuentaService.GetById(usuario.Id);
+                    }
+                    catch
+                    {
+                        throw new Exception(_tramiteClient.ObtenerMensaje("BDDCuentaNoExiste", lang));
+                    }
+                    if (CuentaValidar == null)
+                    {
+                        try
+                        {
+                            _cuentaService.AgregarCuenta(usuario.Id, Usuario.Correo, Usuario.Id);
+                            var patchData = new Dictionary<string, object>
+                            {
+                                { $"extension_{_graphApiOptions.ExtensionId}_validado", "true" }
+                            };
+                            //validacion de segundo apellido
+                            var userUpdate = new Microsoft.Graph.Models.User
+                            {
+                                AdditionalData = patchData,
+                                DisplayName = nombreCompleto
+                            };
+
+                            var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(_tramiteClient.ObtenerMensaje("B2CErrorConnection", lang));
+                        }
+                    }
+
+                    
+                    
+                    return Success(new { exist = true, nombres = Usuario.Nombres, primerApellido = Usuario.PrimerApellido, segundoApellido = Usuario.SegundoApellido, nombreCompleto = nombreCompleto, fechaNacimiento = Usuario.FechaNacimiento, nacionalidad = Usuario.IdNacionalidad });
+                }
+                
             }
             catch (Exception exc)
             {
-                return this.BadRequest($"Problema de conexión con la base de datos");
+                return this.BadRequest(exc.Message);
             }
         }
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "JwtBearerAuth,Bearer")]
         [HttpPost]
         [Route("GuardarDatosMinimos")]
         public IActionResult GuardarDatosMinimos([FromBody] UsuarioRequestModel usuario)
@@ -93,14 +200,12 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
             }
             bool eliminarUsuario = false;
-            var idioma = Request.Headers["Language"].FirstOrDefault();
-            if (idioma == null)
-            {
-                idioma = "es";
-            }
+            var lang = Request.Headers["Language"].FirstOrDefault();
+            if (lang == null)
+            lang = "es";
             try
             {
-                var scopes = new[] { _graphApiOptions.Scopes};
+                var scopes = new[] { _graphApiOptions.Scopes };
                 var tenantId = _graphApiOptions.TenantId;
                 var clientId = _graphApiOptions.ClientId;
                 var clientSecret = _graphApiOptions.ClientSecret;
@@ -108,7 +213,7 @@ namespace hexagonal.infrastructure.api.Controllers
                     tenantId, clientId, clientSecret);
                 var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
 
-                //validar campos opcionales 
+                //validar campos opcionales
                 if (usuario.SegundoApellido.IsNullOrEmpty())
                 {
                     usuario.SegundoApellido = string.Empty;
@@ -116,10 +221,28 @@ namespace hexagonal.infrastructure.api.Controllers
 
                 if (usuario.CorreoAlternativo.IsNullOrEmpty())
                 {
-                    usuario.CorreoAlternativo = "";
+                    usuario.CorreoAlternativo = string.Empty;
                 }
 
-                
+                if (usuario.IpPublica.IsNullOrEmpty())
+                {
+                    usuario.IpPublica = string.Empty;
+                }
+
+                if (usuario.Altitud.IsNullOrEmpty())
+                {
+                    usuario.Altitud = string.Empty;
+                }
+
+                if (usuario.Latitud.IsNullOrEmpty())
+                {
+                    usuario.Latitud = string.Empty;
+                }
+
+                if (usuario.Longitud.IsNullOrEmpty())
+                {
+                    usuario.Longitud = string.Empty;
+                }
 
                 //obtener configuracion de registro persona
                 try
@@ -128,15 +251,7 @@ namespace hexagonal.infrastructure.api.Controllers
 
                     if (configuracion == null)
                     {
-                        if (idioma == "es")
-                        {
-                            return BadRequest("No existe configuracion de registro persona");
-                        }
-                        else
-                        {
-                            return BadRequest("No registration person configuration found");
-                        }
-                       
+                        return BadRequest(_tramiteClient.ObtenerMensaje("RegistroPersonaErrorNullConfiguration", lang));
                     }
                     var edad = _registroPersonaService.CalcularEdad(usuario.FechaNacimiento);
                     if (edad < configuracion.EdadMinima)
@@ -146,118 +261,86 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
                 catch (Exception ex)
                 {
-                    //agregar error en español y en ingles 
-                    if(idioma=="es")
-                    {
-                        return this.BadRequest("Error al obtener la configuracion de registro persona");
-                    }
-                    else
-                    {
-                        return this.BadRequest("Error retrieving registration person configuration.");
-                    }
+                    return BadRequest(_tramiteClient.ObtenerMensaje("RegistroPersonaErrorConfiguration", lang));
                 }
 
                 //Buscar si el correo alternativo ya se encuentra en usuario
                 try
                 {
-                    var usuarioCorreoExistente = _UsuarioService.GetByCorreo(usuario.CorreoAlternativo);
+                    var usuarioCorreoExistente = _UsuarioService.GetByCorreoAlternativo(usuario.CorreoAlternativo);
                     if (usuarioCorreoExistente != null)
                     {
-                        if (idioma == "es")
-                        {
-                            return BadRequest($"El correo alternativo ya se encuentra registrado en otra cuenta, ingrese un correo diferente");
-                        }
-                        else
-                        {
-                            return BadRequest($"The alternate email is already registered in another account, please enter a different email");
-                        }
+                        return this.Success(new { mensaje = _tramiteClient.ObtenerMensaje("CorreoAlternativoExistente", lang)});
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (idioma == "es")
-                    {
-                        return BadRequest($"Error al obtener verificación de correo alternativo");
-                    }
-                    else
-                    {
-                        return BadRequest($"Error retrieving alternate email verification");
-                    }
+                    return BadRequest(_tramiteClient.ObtenerMensaje("VerificacionCorreoAlternativoError", lang));
                 }
-
 
                 //Obtener el usuario de B2C
                 try
                 {
                     var userGraph = graphClient.Users[usuario.Id.ToString()].GetAsync().Result;
-
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    if (idioma == "es")
-                    {
-                        return BadRequest($"Usuario con id {usuario.Id} no existe");
-                    }
-                    else
-                    {
-                        return BadRequest($"User with id {usuario.Id} not exist");
-                    }
+                    return BadRequest(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta", lang));
                 }
-                //eliminar usuario si es el caso
-                if (eliminarUsuario)
-                {
-                    try
-                    {
-                        var eliminado = graphClient.Users[usuario.Id.ToString()].DeleteAsync();
-                        if (idioma == "es")
-                        {
-                            return Success("Usuario eliminado exitosamente");
-                        }
-                        else
-                        {
-                            return Success("User deleted successfully");
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        if (idioma == "es")
-                        {
-                            return BadRequest($"No se pudo eliminar el usuario");
-                        }
-                        else
-                        {
-                            return BadRequest($"User cannot be deleted");
-                        }
-                    }
-                }
-                //Agregar el usuario en la base de batos
-                try
-                {
-                    //verificar que no exista
-                    var usuarioExistente = _UsuarioService.GetById(usuario.Id);
-                    if (usuarioExistente == null)
-                    {
-                        _UsuarioService.Add(usuario,userId);
-                    }
-                }
-                catch (Exception exc)
-                {
-                    return this.BadRequest("Hubo un error almacenando sus datos en el sistema");
-                }
-
                 if (usuario.SegundoApellido.Length > 0)
                 {
                     usuario.SegundoApellido = " " + usuario.SegundoApellido;
                 }
                 var nombreCompleto = usuario.Nombres + " " + usuario.PrimerApellido + usuario.SegundoApellido;
 
+                //eliminar usuario si es el caso
+                if (eliminarUsuario)
+                {
+                    try
+                    {
+                        //crearjson con nombres
+                        var json = new Dictionary<string, string>
+                            {
+                                { "namePersona", nombreCompleto }
+                            };
+
+                            try
+                            {
+                                var eliminado = graphClient.Users[usuario.Id.ToString()].DeleteAsync();
+
+                            }
+                            catch
+                            {
+                            throw new Exception(_tramiteClient.ObtenerMensaje("B2CDeleteUser", lang));
+                        }
+                            
+                            var jsonSerialize = JsonConvert.SerializeObject(json);
+                            try
+                            {
+                                _correoClient.EnviarCorreo(null, usuario.Correo, "Acceso denegado a menor de edad", "PERSONA.CREACION.MENOREDAD", jsonSerialize, lang);
+                            }
+                            catch (Exception ex)
+                            {
+                            throw new Exception(_tramiteClient.ObtenerMensaje("SMTPError", lang));
+                        }
+
+                        return Success(_tramiteClient.ObtenerMensaje("B2CDeleteUserSuccess", lang));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(ex.Message);
+                    }
+                }
+
+               
                 //Actualizar el usuario de B2C
                 try
                 {
                     var patchData = new Dictionary<string, object>
-                {
-                    { $"extension_{_graphApiOptions.ExtensionId}_validado", "true" }
-                };
+                    {
+                        { $"extension_{_graphApiOptions.ExtensionId}_validado", "true" }
+                    };
                     //validacion de segundo apellido
                     var userUpdate = new Microsoft.Graph.Models.User
                     {
@@ -266,31 +349,113 @@ namespace hexagonal.infrastructure.api.Controllers
                     };
 
                     var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
-
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
 
                 }
-                catch
+
+                //Agregar el usuario en la base de batos
+                try
                 {
-                    if(idioma == "es")
+                    var usuarioExistente = _UsuarioService.GetByCorreo(usuario.Correo);
+                    
+                    //verificar que no exista usuario
+                    if (usuarioExistente == null)
                     {
-                        return this.BadRequest("No se pudo actualizar la información de registro");
+                        try
+                        {
+                             _UsuarioService.Add(usuario, userId);
+                            var usuarioNuevo = _UsuarioService.GetByCorreo(usuario.Correo);
+                            //enviar acuerdos
+                            try
+                            {
+                                Datos datos = new Datos();
+                                datos.nombres = usuario.Nombres;
+                                datos.primerApellido = usuario.PrimerApellido;
+                                datos.segundoApellido = usuario.SegundoApellido;
+                                datos.fechaNacimiento = usuario.FechaNacimiento;
+                                datos.correo = usuario.Correo;
+                                datos.correoAlternativo = usuario.CorreoAlternativo;
+                                datos.nacionalidad = usuario.Nacionalidad;
+                                datos.tipoIdentificacion = usuario.TipoIdentificacion;
+                                datos.sexo = usuario.Sexo;
+                                datos.genero = usuario.Genero;
+                                datos.numeroIdentificacion = usuario.NumeroIdentificacion;
+                                datos.id = usuarioNuevo.Id;
+                                _tramiteClient.GenerarAcuerdos(datos, lang);
+                            }
+                            catch
+                            {
+                                return BadRequest(_tramiteClient.ObtenerMensaje("TCAcuerdosError", lang));
+                            }
+                        }
+                        catch
+                        {
+                            return BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioErrorCreate", lang));
+                        }
+                        
+                        
+
                     }
                     else
                     {
-                        //poner el mensaje en ingles
-                        return this.BadRequest("Cannot update the register information");
+                        var cuentaExistente = _cuentaService.GetById(usuario.Id);
+                        if (cuentaExistente == null)
+                        {
+                            _cuentaService.AgregarCuenta(usuario.Id, usuario.Correo,usuarioExistente.Id);
+                        }
                     }
                 }
+                catch (Exception exc)
+                {
+                    try
+                    {
+                        var patchData = new Dictionary<string, object>
+                    {
+                        { $"extension_{_graphApiOptions.ExtensionId}_validado", "false" }
+                    };
+                        //validacion de segundo apellido
+                        var userUpdate = new Microsoft.Graph.Models.User
+                        {
+                            AdditionalData = patchData,
+                            DisplayName = nombreCompleto
+                        };
 
+                        var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
+                    }
+                    return BadRequest(_tramiteClient.ObtenerMensaje("BDDCuentaErrorCreate", lang));
+                }
 
                 return Success();
             }
             catch (Exception exc)
             {
-                return this.BadRequest("Error no controlado, inténtelo nuevamente");
+                return this.BadRequest(_tramiteClient.ObtenerMensaje("", lang));
             }
         }
 
-       
+        [HttpGet]
+        [Route("ObtenerUsuarioPorCuentaId/{cuentaId}")]
+        public IActionResult ObtenerUsuarioIdPorCuentaId(Guid cuentaId)
+        {
+            var lang = Request.Headers["Language"].FirstOrDefault();
+            if (lang == null)
+                lang = "es";
+            try
+            {
+                var usuario = _UsuarioService.ObtenerUsuarioPorCuentaId(cuentaId);
+                return Success(usuario);
+            }
+            catch (Exception exc)
+            {
+                return this.BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioPorCuenta",lang));
+            }
+        }
     }
 }

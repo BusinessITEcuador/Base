@@ -3,7 +3,7 @@ using hexagonal.data.repositories.generics;
 using hexagonal.domain.repositories.interfaces;
 using hexagonal.domain.repositories.interfaces.generics;
 using hexagonal.infrastructure.data.repositories.genero;
-using hexagonal.infrastructure.data.repositories.idioma;
+using hexagonal.infrastructure.data.repositories.log;
 using hexagonal.infrastructure.data.repositories.usuario;
 
 namespace hexagonal.application.services
@@ -27,14 +27,20 @@ namespace hexagonal.application.services
             return new UsuarioRepository(_context);
         }
 
+        public ICuentaDomainRepository GetCuentaRepository()
+        {
+            return new CuentaRepository(_context);
+        }
+
         public IGeneroDomainRepository GetGeneroRepository()
         {
             return new GeneroRepository(_context);
         }
 
-        public IIdiomaDomainRepository GetIdiomaRepository()
+
+        public ILogDomainRepository GetLogRepository()
         {
-            return new IdiomaRepository(_context);
+            return new LogRepository(_context);
         }
 
         public void SaveSync()
