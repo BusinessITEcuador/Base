@@ -2,6 +2,8 @@
 using hexagonal.application.models.tramites;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
@@ -13,11 +15,15 @@ namespace hexagonal.application.external
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<TramiteClient> _logger;
 
-        public TramiteClient(HttpClient httpClient, IConfiguration configuration)
+        public TramiteClient(HttpClient httpClient, IConfiguration configuration,
+            ILogger<TramiteClient> logger
+            )
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _configuration = configuration;
+            _logger = logger;
         }
 
         public void GenerarAcuerdos(Datos datos, string lang)
@@ -35,9 +41,10 @@ namespace hexagonal.application.external
                 HttpResponseMessage response = _httpClient.PostAsync(apiUrl, content).Result;
                 string responseContent = response.Content.ReadAsStringAsync().Result;
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                throw new Exception(ex.Message);
+                _logger.LogError("An error occurred:" + exc.Message);
+                throw new Exception(exc.Message);
             }
         }
 
@@ -67,7 +74,13 @@ namespace hexagonal.application.external
                 HttpResponseMessage response = _httpClient.PostAsync(apiUrl, content).Result;
                 string responseContent = response.Content.ReadAsStringAsync().Result;
 
-                MensajeResponseModel respuesta = JsonConvert.DeserializeObject<MensajeResponseModel>(responseContent);
+                MensajeResponseModel respuesta = new MensajeResponseModel();
+
+                if(responseContent != null && responseContent != "")
+                {
+                    respuesta = JsonConvert.DeserializeObject<MensajeResponseModel>(responseContent);
+                }
+               
 
 
                 if (response.IsSuccessStatusCode)
@@ -79,9 +92,9 @@ namespace hexagonal.application.external
                     throw new Exception(respuesta.message);
                 }
             }
-            catch (SqlException ex)
-            { 
-                
+            catch (SqlException exc)
+            {
+                _logger.LogError("An error occurred:" + exc.Message);
                 if (lang == "en")
                 {
                     return "Sorry, there is a problem in our system.";
@@ -92,9 +105,10 @@ namespace hexagonal.application.external
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                throw new Exception(ex.Message);
+                _logger.LogError("An error occurred:" + exc.Message);
+                throw new Exception(exc.Message);
             }
         }
 

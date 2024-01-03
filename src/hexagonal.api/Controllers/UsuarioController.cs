@@ -88,7 +88,7 @@ namespace hexagonal.infrastructure.api.Controllers
                             correo = usuarioCuenta;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
                         _logger.LogError("An error occurred:"+exc.Message);
                         throw new Exception(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta",lang));
@@ -112,7 +112,7 @@ namespace hexagonal.infrastructure.api.Controllers
                         log.IpPublica = usuario.IpPublica;
                         _logService.Add(log);
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
                         _logger.LogError("An error occurred:"+exc.Message);
                         throw new Exception(_tramiteClient.ObtenerMensaje("LogErrorInicio", lang));
@@ -163,7 +163,7 @@ namespace hexagonal.infrastructure.api.Controllers
 
                             var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
                         }
-                        catch (Exception ex)
+                        catch (Exception exc)
                         {
                             _logger.LogError("An error occurred:"+exc.Message);
                             throw new Exception(_tramiteClient.ObtenerMensaje("B2CErrorConnection", lang));
@@ -269,7 +269,7 @@ namespace hexagonal.infrastructure.api.Controllers
                         eliminarUsuario = true;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
                     _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("RegistroPersonaErrorConfiguration", lang));
@@ -284,7 +284,7 @@ namespace hexagonal.infrastructure.api.Controllers
                         return this.Success(new { mensaje = _tramiteClient.ObtenerMensaje("CorreoAlternativoExistente", lang)});
                     }
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
                     _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("VerificacionCorreoAlternativoError", lang));
@@ -295,7 +295,7 @@ namespace hexagonal.infrastructure.api.Controllers
                 {
                     var userGraph = graphClient.Users[usuario.Id.ToString()].GetAsync().Result;
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
                     _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta", lang));
@@ -332,7 +332,7 @@ namespace hexagonal.infrastructure.api.Controllers
                             {
                                 _correoClient.EnviarCorreo(null, usuario.Correo, "Acceso denegado a menor de edad", "PERSONA.CREACION.MENOREDAD", jsonSerialize, lang);
                             }
-                            catch (Exception ex)
+                            catch (Exception exc)
                             {
                             _logger.LogError("An error occurred:"+exc.Message);
                             throw new Exception(_tramiteClient.ObtenerMensaje("SMTPError", lang));
@@ -341,9 +341,10 @@ namespace hexagonal.infrastructure.api.Controllers
                         return Success(_tramiteClient.ObtenerMensaje("B2CDeleteUserSuccess", lang));
 
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
-                        return BadRequest(ex.Message);
+                        _logger.LogError("An error occurred:"+exc.Message);
+                        return BadRequest(exc.Message);
                     }
                 }
 
@@ -364,7 +365,7 @@ namespace hexagonal.infrastructure.api.Controllers
 
                     var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
                     _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
