@@ -29,7 +29,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                this._logger.LogError(exc.Message);
+                this._logger.LogError("An error occurred:"+exc.Message);
                 return this.BadRequest(exc.Message);
             }
         }

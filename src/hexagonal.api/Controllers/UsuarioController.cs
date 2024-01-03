@@ -90,6 +90,7 @@ namespace hexagonal.infrastructure.api.Controllers
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError("An error occurred:"+exc.Message);
                         throw new Exception(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta",lang));
                     }
                 }
@@ -113,6 +114,7 @@ namespace hexagonal.infrastructure.api.Controllers
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError("An error occurred:"+exc.Message);
                         throw new Exception(_tramiteClient.ObtenerMensaje("LogErrorInicio", lang));
                     }
                 }
@@ -163,6 +165,7 @@ namespace hexagonal.infrastructure.api.Controllers
                         }
                         catch (Exception ex)
                         {
+                            _logger.LogError("An error occurred:"+exc.Message);
                             throw new Exception(_tramiteClient.ObtenerMensaje("B2CErrorConnection", lang));
                         }
                     }
@@ -175,7 +178,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message);
+                _logger.LogError("An error occurred:"+exc.Message);
                 return this.BadRequest(exc.Message);
             }
         }
@@ -268,6 +271,7 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("RegistroPersonaErrorConfiguration", lang));
                 }
 
@@ -282,6 +286,7 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("VerificacionCorreoAlternativoError", lang));
                 }
 
@@ -292,6 +297,7 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta", lang));
                 }
                 if (usuario.SegundoApellido.Length > 0)
@@ -328,6 +334,7 @@ namespace hexagonal.infrastructure.api.Controllers
                             }
                             catch (Exception ex)
                             {
+                            _logger.LogError("An error occurred:"+exc.Message);
                             throw new Exception(_tramiteClient.ObtenerMensaje("SMTPError", lang));
                         }
 
@@ -359,6 +366,7 @@ namespace hexagonal.infrastructure.api.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError("An error occurred:"+exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
 
                 }
@@ -434,6 +442,7 @@ namespace hexagonal.infrastructure.api.Controllers
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError("An error occurred:"+exc.Message);
                         return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
                     }
                     return BadRequest(_tramiteClient.ObtenerMensaje("BDDCuentaErrorCreate", lang));
@@ -443,7 +452,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message);
+                _logger.LogError("An error occurred:"+exc.Message);
                 return this.BadRequest(_tramiteClient.ObtenerMensaje(string.Empty, lang));
             }
         }
@@ -462,7 +471,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message);
+                _logger.LogError("An error occurred:"+exc.Message);
                 return this.BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioPorCuenta",lang));
             }
         }

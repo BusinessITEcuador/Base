@@ -58,7 +58,7 @@ namespace hexagonal.application.external
             try
             {
                 string apiUrl = $"{_configuration.GetSection("Externos:Tramite:BaseUrl").Value}/api/Idioma/MensajePorCodigo";
-                string jsonRequest = JsonConvert.SerializeObject(new MensajeRequestModel { codigo = codigo, codigoIdioma=lang });
+                string jsonRequest = JsonConvert.SerializeObject(new MensajeRequestModel { codigo = codigo, codigoIdioma = lang });
                 StringContent content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
                 // Agregar encabezado "Language"
@@ -80,7 +80,8 @@ namespace hexagonal.application.external
                 }
             }
             catch (SqlException ex)
-            {
+            { 
+                
                 if (lang == "en")
                 {
                     return "Sorry, there is a problem in our system.";
