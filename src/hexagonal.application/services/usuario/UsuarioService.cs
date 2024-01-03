@@ -97,7 +97,7 @@ namespace hexagonal.application.services.Usuario
             }
         }
 
-        public UsuarioResponseModel ObtenerUsuarioPorCuentaId (Guid cuentaId)
+        public UsuarioResponseModel ObtenerUsuarioPorCuentaId(Guid cuentaId)
         {
             IUsuarioDomainRepository repository = _unitOfWork.GetUsuarioRepository();
             ICuentaDomainRepository cuentaDomainRepository = _unitOfWork.GetCuentaRepository();
@@ -106,7 +106,7 @@ namespace hexagonal.application.services.Usuario
             {
                 return null;
             }
-            return this._mapper.Map < UsuarioResponseModel > (repository.FirstOrDefaultSync(p => p.Id == cuenta.UsuarioId));
+            return this._mapper.Map<UsuarioResponseModel>(repository.FirstOrDefaultSync(p => p.Id == cuenta.UsuarioId));
         }
     }
 }

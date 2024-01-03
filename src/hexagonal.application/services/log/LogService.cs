@@ -2,11 +2,6 @@
 using hexagonal.application.models.log;
 using hexagonal.application.services.log.interfaces;
 using hexagonal.domain.entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace hexagonal.application.services.log
 {
@@ -29,6 +24,5 @@ namespace hexagonal.application.services.log
             repository.AddSync(logEntity);
             _unitOfWork.SaveSync();
         }
-
     }
 }

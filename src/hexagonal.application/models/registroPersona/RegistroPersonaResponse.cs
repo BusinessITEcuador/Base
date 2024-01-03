@@ -24,5 +24,27 @@
         public bool ActivarFase { get; set; }
         public string CategoriasVisasVigentes { get; set; }
         public string PaisesHabilitadosCedula { get; set; }
+
+        public ConfiguracionPersonaResponse()
+        {
+            ValidarRiesgoPais = false;
+            ValidarPuntoDeAcceso = false;
+            ValidarNacionalidad = false;
+            NacionalidadesPermitidas = string.Empty;
+            ValidarMayoriaEdad = false;
+            EdadMinima = 0;
+            HabilitarCaptcha = false;
+            FechaInicialControl = DateTime.Now;
+            FechaFinalControl = DateTime.Now;
+            VigenciaInformacion = 0;
+            DuracionCodigoVerificacion = 0;
+            IntentosPermitidos = 0;
+            DuracionBloqueo = 0;
+            HabilitarConyuge = false;
+            FechaMaximaRegistro = DateTime.Now;
+            ActivarFase = false;
+            CategoriasVisasVigentes = string.Empty;
+            PaisesHabilitadosCedula = string.Empty;
+        }
     }
 }

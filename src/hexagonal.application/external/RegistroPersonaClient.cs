@@ -24,8 +24,10 @@ namespace hexagonal.application.external
                 var responseStream = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<ConfiguracionPersonaResponse>(responseStream);
             }
-
-            throw new Exception();
+            else
+            {
+                return null;
+            }
         }
     }
 }

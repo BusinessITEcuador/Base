@@ -3,8 +3,8 @@ using hexagonal.application.services;
 using hexagonal.application.services.Cuenta;
 using hexagonal.application.services.genero.interfaces;
 using hexagonal.application.services.Genero;
-using hexagonal.application.services.log.interfaces;
 using hexagonal.application.services.log;
+using hexagonal.application.services.log.interfaces;
 using hexagonal.application.services.registroPersona;
 using hexagonal.application.services.registroPersona.interfaces;
 using hexagonal.application.services.usuario.interfaces;
@@ -14,8 +14,8 @@ using hexagonal.data.repositories.generics;
 using hexagonal.domain.repositories.interfaces;
 using hexagonal.domain.repositories.interfaces.generics;
 using hexagonal.infrastructure.data.repositories.genero;
-using hexagonal.infrastructure.data.repositories.usuario;
 using hexagonal.infrastructure.data.repositories.log;
+using hexagonal.infrastructure.data.repositories.usuario;
 
 namespace hexagonal.api.extensions.injections
 {
@@ -31,7 +31,6 @@ namespace hexagonal.api.extensions.injections
             builder.Services.AddScoped<TramiteClient>();
             builder.Services.AddScoped<CorreoClient>();
             builder.Services.AddScoped<IRegistroPersonaService, RegistroPersonaService>();
-
 
             builder.Services.AddScoped<ILogDomainRepository, LogRepository>();
             builder.Services.AddScoped<ILogService, LogService>();

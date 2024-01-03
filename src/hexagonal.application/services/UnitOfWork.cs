@@ -37,7 +37,6 @@ namespace hexagonal.application.services
             return new GeneroRepository(_context);
         }
 
-
         public ILogDomainRepository GetLogRepository()
         {
             return new LogRepository(_context);

@@ -1,6 +1,5 @@
 ﻿using hexagonal.domain.entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection;
 
 namespace hexagonal.data.contexts

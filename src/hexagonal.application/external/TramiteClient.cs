@@ -1,13 +1,9 @@
-﻿using hexagonal.application.models.log;
-using hexagonal.application.models.tramites;
+﻿using hexagonal.application.models.tramites;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.Net;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace hexagonal.application.external
 {
@@ -43,14 +39,14 @@ namespace hexagonal.application.external
             }
             catch (Exception exc)
             {
-                _logger.LogError("An error occurred:" + exc.Message);
-                throw new Exception(exc.Message);
+                _logger.LogError("An error occurred:", exc.Message);
+                throw;
             }
         }
 
         public string ObtenerMensaje(string codigo, string lang)
         {
-            if(codigo== null || codigo == "" || codigo=="Default")
+            if (codigo == null || codigo == "" || codigo == "Default")
             {
                 if (lang == "en")
                 {
@@ -59,7 +55,6 @@ namespace hexagonal.application.external
                 else
                 {
                     return "Lo sentimos, hay un error en la plataforma";
-
                 }
             }
             try
@@ -76,12 +71,10 @@ namespace hexagonal.application.external
 
                 MensajeResponseModel respuesta = new MensajeResponseModel();
 
-                if(responseContent != null && responseContent != "")
+                if (responseContent != null && responseContent != "")
                 {
                     respuesta = JsonConvert.DeserializeObject<MensajeResponseModel>(responseContent);
                 }
-               
-
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -94,7 +87,7 @@ namespace hexagonal.application.external
             }
             catch (SqlException exc)
             {
-                _logger.LogError("An error occurred:" + exc.Message);
+                _logger.LogError("An error occurred:", exc.Message);
                 if (lang == "en")
                 {
                     return "Sorry, there is a problem in our system.";
@@ -102,15 +95,13 @@ namespace hexagonal.application.external
                 else
                 {
                     return "Lo sentimos, hay un error en la plataforma";
-
                 }
             }
             catch (Exception exc)
             {
-                _logger.LogError("An error occurred:" + exc.Message);
-                throw new Exception(exc.Message);
+                _logger.LogError("An error occurred:", exc.Message);
+                throw;
             }
         }
-
     }
 }

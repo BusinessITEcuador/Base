@@ -4,5 +4,11 @@
     {
         public Guid Id { get; set; }
         public string Correo { get; set; }
+
+        public CuentaResponseModel()
+        {
+            Id = Guid.Empty;
+            Correo = string.Empty;
+        }
     }
 }

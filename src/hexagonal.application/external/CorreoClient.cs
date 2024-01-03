@@ -1,8 +1,5 @@
-﻿
-using hexagonal.application.models.correo;
+﻿using hexagonal.application.models.correo;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.Text;
 
 namespace hexagonal.application.external
@@ -28,7 +25,6 @@ namespace hexagonal.application.external
                 var ruta3 = $"{_configuration.GetSection("Externos:PowerAutomate:FlujoCorreo").Value}";
                 var formData = new MultipartFormDataContent();
 
-
                 string json = $@"{{
                     ""boolFiles"": {(archivos != null ? "true" : "false")},
                     ""codigoPlantilla"": ""{codigo}"",
@@ -39,7 +35,7 @@ namespace hexagonal.application.external
 
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 formData.Add(content, "formdata");
-                if(archivos!=null)
+                if (archivos != null)
                 {
                     foreach (var archivo in archivos)
                     {
@@ -48,7 +44,7 @@ namespace hexagonal.application.external
                         formData.Add(archivoContent, "filedata", $"{archivo.NombreArchivo}.pdf");
                     }
                 }
-                
+
                 HttpResponseMessage response3 = _httpClient.PostAsync(ruta3, formData).Result;
                 if (!response3.IsSuccessStatusCode)
                 {
@@ -59,7 +55,6 @@ namespace hexagonal.application.external
             {
                 throw new Exception(_tramiteClient.ObtenerMensaje("PowerAutomateCorreoError", lang));
             }
-
         }
     }
 }

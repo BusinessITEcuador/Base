@@ -7,10 +7,8 @@ using hexagonal.application.models.usuario;
 using hexagonal.application.services.log.interfaces;
 using hexagonal.application.services.registroPersona.interfaces;
 using hexagonal.application.services.usuario.interfaces;
-using hexagonal.infrastructure.api.Controllers.bases;
 using hexagonal.infrastructure.api.models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection.XmlEncryption;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -38,6 +36,7 @@ namespace hexagonal.infrastructure.api.Controllers
         private readonly CorreoClient _correoClient;
 
         private readonly ILogService _logService;
+
         public UsuarioController(IOptions<GraphApiOptions> graphApiOptions,
             IUsuarioService UsuarioService,
             IRegistroPersonaService registroPersonaService,
@@ -64,10 +63,9 @@ namespace hexagonal.infrastructure.api.Controllers
         {
             var lang = Request.Headers["Language"].FirstOrDefault();
             if (lang == null)
-            lang = "es";
+                lang = "es";
             try
             {
-                var correo = string.Empty;
                 var scopes = new[] { _graphApiOptions.Scopes };
                 var tenantId = _graphApiOptions.TenantId;
                 var clientId = _graphApiOptions.ClientId;
@@ -76,110 +74,126 @@ namespace hexagonal.infrastructure.api.Controllers
                     tenantId, clientId, clientSecret);
                 var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
 
-                var Cuenta = _cuentaService.GetById(usuario.Id);
-                if (Cuenta == null)
-                {
-                    //obtener correo de b2c
-                    try
-                    {
-                        var usuarioCuenta = graphClient.Users[usuario.Id.ToString()].GetAsync().Result.GivenName;
-                        if (usuarioCuenta != null)
-                        {
-                            correo = usuarioCuenta;
-                        }
-                    }
-                    catch (Exception exc)
-                    {
-                        _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
-                        throw new Exception(_tramiteClient.ObtenerMensaje("B2CNoExisteCuenta",lang));
-                    }
-                }
-                else
-                {
-                    correo = Cuenta.Correo;
-                }
-                //guardar log
+                var correo = GetCorreo(usuario.Id, lang, graphClient);
+
                 if (usuario.Log)
                 {
-                    try
-                    {
-                        var log = new LogRequestModel();
-                        log.Estado = "EXITOSO";
-                        log.Usuario = correo;
-                        log.Altitud = usuario.Altitud;
-                        log.Latitud = usuario.Latitud;
-                        log.Longitud = usuario.Longitud;
-                        log.IpPublica = usuario.IpPublica;
-                        _logService.Add(log);
-                    }
-                    catch (Exception exc)
-                    {
-                        _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
-                        throw new Exception(_tramiteClient.ObtenerMensaje("LogErrorInicio", lang));
-                    }
+                    GuardarLog(usuario, correo, lang);
                 }
+
                 var Usuario = _UsuarioService.GetByCorreo(correo);
                 if (Usuario == null)
                 {
                     return this.Success(new { exist = false });
                 }
-                else
-                {
-                    if (Usuario.SegundoApellido.IsNullOrEmpty())
-                    {
-                        Usuario.SegundoApellido = string.Empty;
-                    }
-                    if (Usuario.SegundoApellido.Length > 0)
-                    {
-                        Usuario.SegundoApellido = " " + Usuario.SegundoApellido;
-                    }
-                    var nombreCompleto = Usuario.Nombres + " " + Usuario.PrimerApellido + Usuario.SegundoApellido;
 
-                    //validar nuevamente si la cuenta no existe para colocarla como validado
-                    var CuentaValidar = new CuentaResponseModel();
-                    try
-                    {
-                        CuentaValidar = _cuentaService.GetById(usuario.Id);
-                    }
-                    catch
-                    {
-                        throw new Exception(_tramiteClient.ObtenerMensaje("BDDCuentaNoExiste", lang));
-                    }
-                    if (CuentaValidar == null)
-                    {
-                        try
-                        {
-                            _cuentaService.AgregarCuenta(usuario.Id, Usuario.Correo, Usuario.Id);
-                            var patchData = new Dictionary<string, object>
-                            {
-                                { $"extension_{_graphApiOptions.ExtensionId}_validado", "true" }
-                            };
-                            //validacion de segundo apellido
-                            var userUpdate = new Microsoft.Graph.Models.User
-                            {
-                                AdditionalData = patchData,
-                                DisplayName = nombreCompleto
-                            };
+                var nombreCompleto = ConstructFullName(Usuario);
 
-                            var result = graphClient.Users[usuario.Id.ToString()].PatchAsync(userUpdate).Result;
-                        }
-                        catch (Exception exc)
-                        {
-                            _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
-                            throw new Exception(_tramiteClient.ObtenerMensaje("B2CErrorConnection", lang));
-                        }
-                    }
+                ValidarCuenta(usuario.Id, correo, nombreCompleto, lang, graphClient);
 
-                    
-                    
-                    return Success(new { exist = true, nombres = Usuario.Nombres, primerApellido = Usuario.PrimerApellido, segundoApellido = Usuario.SegundoApellido, nombreCompleto = nombreCompleto, fechaNacimiento = Usuario.FechaNacimiento, nacionalidad = Usuario.IdNacionalidad });
-                }
-                
+                return Success(new { exist = true, nombres = Usuario.Nombres, primerApellido = Usuario.PrimerApellido, segundoApellido = Usuario.SegundoApellido, nombreCompleto = nombreCompleto, fechaNacimiento = Usuario.FechaNacimiento, nacionalidad = Usuario.IdNacionalidad });
             }
             catch (Exception exc)
             {
                 _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
                 return this.BadRequest(exc.Message);
+            }
+        }
+
+        private string GetCorreo(Guid userId, string lang, GraphServiceClient _graphClient)
+        {
+            var cuenta = _cuentaService.GetById(userId);
+
+            if (cuenta == null)
+            {
+                try
+                {
+                    return _graphClient.Users[userId.ToString()].GetAsync().Result.GivenName ?? string.Empty;
+                }
+                catch (Exception exc)
+                {
+                    LogAndThrowException("B2CNoExisteCuenta", lang, exc);
+                }
+            }
+
+            return cuenta.Correo;
+        }
+
+        private void GuardarLog(UsuarioLogRequestModel usuario, string correo, string lang)
+        {
+            try
+            {
+                var log = new LogRequestModel
+                {
+                    Estado = "EXITOSO",
+                    Usuario = correo,
+                    Altitud = usuario.Altitud,
+                    Latitud = usuario.Latitud,
+                    Longitud = usuario.Longitud,
+                    IpPublica = usuario.IpPublica
+                };
+                _logService.Add(log);
+            }
+            catch (Exception exc)
+            {
+                LogAndThrowException("LogErrorInicio", lang, exc);
+            }
+        }
+
+        private string ConstructFullName(UsuarioResponseModel Usuario)
+        {
+            if (Usuario.SegundoApellido.IsNullOrEmpty())
+            {
+                Usuario.SegundoApellido = string.Empty;
+            }
+
+            if (Usuario.SegundoApellido.Length > 0)
+            {
+                Usuario.SegundoApellido = " " + Usuario.SegundoApellido;
+            }
+
+            return Usuario.Nombres + " " + Usuario.PrimerApellido + Usuario.SegundoApellido;
+        }
+
+        private void LogAndThrowException(string message, string lang, Exception exc)
+        {
+            _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
+            throw new Exception(_tramiteClient.ObtenerMensaje(message, lang));
+        }
+
+        private void ValidarCuenta(Guid userId, string correo, string nombreCompleto, string lang, GraphServiceClient _graphClient)
+        {
+            var cuentaValidar = new CuentaResponseModel();
+            try
+            {
+                cuentaValidar = _cuentaService.GetById(userId);
+            }
+            catch (Exception exc)
+            {
+                LogAndThrowException("BDDCuentaNoExiste", lang, exc);
+            }
+            if (cuentaValidar == null)
+            {
+                try
+                {
+                    _cuentaService.AgregarCuenta(userId, correo, userId);
+                    var patchData = new Dictionary<string, object>
+            {
+                { $"extension_{_graphApiOptions.ExtensionId}_validado", "true" }
+            };
+
+                    var userUpdate = new Microsoft.Graph.Models.User
+                    {
+                        AdditionalData = patchData,
+                        DisplayName = nombreCompleto
+                    };
+
+                    _graphClient.Users[userId.ToString()].PatchAsync(userUpdate).Wait();
+                }
+                catch (Exception exc)
+                {
+                    LogAndThrowException("B2CErrorConnection", lang, exc);
+                }
             }
         }
 
@@ -193,7 +207,7 @@ namespace hexagonal.infrastructure.api.Controllers
             if (httpContext.User.Identity.IsAuthenticated)
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "aud");
-                
+
                 if (userIdClaim != null)
                 {
                     Guid.TryParse(userIdClaim.Value, out userId);
@@ -212,7 +226,7 @@ namespace hexagonal.infrastructure.api.Controllers
             bool eliminarUsuario = false;
             var lang = Request.Headers["Language"].FirstOrDefault();
             if (lang == null)
-            lang = "es";
+                lang = "es";
             try
             {
                 var scopes = new[] { _graphApiOptions.Scopes };
@@ -281,7 +295,7 @@ namespace hexagonal.infrastructure.api.Controllers
                     var usuarioCorreoExistente = _UsuarioService.GetByCorreoAlternativo(usuario.CorreoAlternativo);
                     if (usuarioCorreoExistente != null)
                     {
-                        return this.Success(new { mensaje = _tramiteClient.ObtenerMensaje("CorreoAlternativoExistente", lang)});
+                        return this.Success(new { mensaje = _tramiteClient.ObtenerMensaje("CorreoAlternativoExistente", lang) });
                     }
                 }
                 catch (Exception exc)
@@ -317,29 +331,27 @@ namespace hexagonal.infrastructure.api.Controllers
                                 { "namePersona", nombreCompleto }
                             };
 
-                            try
-                            {
-                                var eliminado = graphClient.Users[usuario.Id.ToString()].DeleteAsync();
-
-                            }
-                            catch
-                            {
+                        try
+                        {
+                            var eliminado = graphClient.Users[usuario.Id.ToString()].DeleteAsync();
+                        }
+                        catch
+                        {
                             throw new Exception(_tramiteClient.ObtenerMensaje("B2CDeleteUser", lang));
                         }
-                            
-                            var jsonSerialize = JsonConvert.SerializeObject(json);
-                            try
-                            {
-                                _correoClient.EnviarCorreo(null, usuario.Correo, "Acceso denegado a menor de edad", "PERSONA.CREACION.MENOREDAD", jsonSerialize, lang);
-                            }
-                            catch (Exception exc)
-                            {
+
+                        var jsonSerialize = JsonConvert.SerializeObject(json);
+                        try
+                        {
+                            _correoClient.EnviarCorreo(null, usuario.Correo, "Acceso denegado a menor de edad", "PERSONA.CREACION.MENOREDAD", jsonSerialize, lang);
+                        }
+                        catch (Exception exc)
+                        {
                             _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
                             throw new Exception(_tramiteClient.ObtenerMensaje("SMTPError", lang));
                         }
 
                         return Success(_tramiteClient.ObtenerMensaje("B2CDeleteUserSuccess", lang));
-
                     }
                     catch (Exception exc)
                     {
@@ -348,7 +360,6 @@ namespace hexagonal.infrastructure.api.Controllers
                     }
                 }
 
-               
                 //Actualizar el usuario de B2C
                 try
                 {
@@ -369,20 +380,19 @@ namespace hexagonal.infrastructure.api.Controllers
                 {
                     _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
                     return BadRequest(_tramiteClient.ObtenerMensaje("B2CUpdateInformation", lang));
-
                 }
 
                 //Agregar el usuario en la base de batos
                 try
                 {
                     var usuarioExistente = _UsuarioService.GetByCorreo(usuario.Correo);
-                    
+
                     //verificar que no exista usuario
                     if (usuarioExistente == null)
                     {
                         try
                         {
-                             _UsuarioService.Add(usuario, userId);
+                            _UsuarioService.Add(usuario, userId);
                             var usuarioNuevo = _UsuarioService.GetByCorreo(usuario.Correo);
                             //enviar acuerdos
                             try
@@ -411,16 +421,13 @@ namespace hexagonal.infrastructure.api.Controllers
                         {
                             return BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioErrorCreate", lang));
                         }
-                        
-                        
-
                     }
                     else
                     {
                         var cuentaExistente = _cuentaService.GetById(usuario.Id);
                         if (cuentaExistente == null)
                         {
-                            _cuentaService.AgregarCuenta(usuario.Id, usuario.Correo,usuarioExistente.Id);
+                            _cuentaService.AgregarCuenta(usuario.Id, usuario.Correo, usuarioExistente.Id);
                         }
                     }
                 }
@@ -473,7 +480,7 @@ namespace hexagonal.infrastructure.api.Controllers
             catch (Exception exc)
             {
                 _logger.LogError("An error occurred: {ErrorMessage}", exc.Message);
-                return this.BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioPorCuenta",lang));
+                return this.BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioPorCuenta", lang));
             }
         }
     }
