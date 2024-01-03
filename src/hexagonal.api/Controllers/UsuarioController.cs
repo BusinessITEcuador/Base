@@ -175,6 +175,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
+                _logger.LogError(exc.Message);
                 return this.BadRequest(exc.Message);
             }
         }
@@ -189,14 +190,20 @@ namespace hexagonal.infrastructure.api.Controllers
             if (httpContext.User.Identity.IsAuthenticated)
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "aud");
-
-                Guid.TryParse(userIdClaim.Value, out userId);
+                
+                if (userIdClaim != null)
+                {
+                    Guid.TryParse(userIdClaim.Value, out userId);
+                }
 
                 if (userId == Guid.Empty)
                 {
                     var userIdClaim2 = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
 
-                    Guid.TryParse(userIdClaim2.Value, out userId);
+                    if (userIdClaim2 != null)
+                    {
+                        Guid.TryParse(userIdClaim2.Value, out userId);
+                    }
                 }
             }
             bool eliminarUsuario = false;
@@ -436,7 +443,8 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                return this.BadRequest(_tramiteClient.ObtenerMensaje("", lang));
+                _logger.LogError(exc.Message);
+                return this.BadRequest(_tramiteClient.ObtenerMensaje(string.Empty, lang));
             }
         }
 
@@ -454,6 +462,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
+                _logger.LogError(exc.Message);
                 return this.BadRequest(_tramiteClient.ObtenerMensaje("BDDUsuarioPorCuenta",lang));
             }
         }

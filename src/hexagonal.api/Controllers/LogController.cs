@@ -29,7 +29,7 @@ namespace hexagonal.infrastructure.api.Controllers
             }
             catch (Exception exc)
             {
-                this._logger.LogError(exc, "Error setting genre");
+                this._logger.LogError(exc.Message);
                 return this.BadRequest(exc.Message);
             }
         }
