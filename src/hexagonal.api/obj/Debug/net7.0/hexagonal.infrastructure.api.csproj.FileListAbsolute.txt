@@ -200,3 +200,4 @@ C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.api\obj\De
 C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.api\obj\Debug\net7.0\hexagonal.infrastructure.api.genruntimeconfig.cache
 C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.api\obj\Debug\net7.0\ref\hexagonal.infrastructure.api.dll
 C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.api\bin\Debug\net7.0\appsettings.QA.json
+C:\Users\EmilyChimbo\Documents\Proyecto VisasTotal\Base\src\hexagonal.api\bin\Debug\net7.0\appsettings.Local.json

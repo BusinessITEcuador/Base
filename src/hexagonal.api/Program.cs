@@ -20,12 +20,16 @@ builder.Services.Configure<GraphApiOptions>(builder.Configuration.GetSection("Gr
 
 builder.Services.AddAuthorization();
 
+var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string>() ?? "*";
+var methods = builder.Configuration.GetSection("Cors:AllowedMethods").Get<string>() ?? "*";
+var headers = builder.Configuration.GetSection("Cors:AllowedHeaders").Get<string>() ?? "*";
+
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
 {
     builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
+        .WithOrigins(origins)
+        .WithMethods(methods)
+        .WithHeaders(headers);
 }));
 
 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
